@@ -1,3 +1,2 @@
 import random
-me inimioara programare
-1233
+marieneeeeeeeeee te iau in ...
