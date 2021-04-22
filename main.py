@@ -1,3 +1,3 @@
+import tkinter as tk
 import random
-me inimioara programare
-1233
+import colors
