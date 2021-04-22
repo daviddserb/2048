@@ -1,0 +1,14 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import random\r\nme inimioara programare\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 11e8853cb94829d735024c101cfe644e8ef32c2d)
++++ b/main.py	(date 1619115026653)
+@@ -1,2 +1,3 @@
+ import random
+ me inimioara programare
++ma doare sufletu
