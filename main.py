@@ -20,7 +20,18 @@ class Py2048Logic:  # fac doar logica acum
             else:
                 self.grid[pos] = 2  # dar poate sa fie si 2 (cea mai mare probabilitate)
 
+    def make_move(self, move):
+        for i in range(N):
+            this = self.grid[i, :]
+            this_n = this[this != 0]
+
+            new_this = np.zeros_like(this)
+            new_this[:len(this_n)] = this_n
+            self.grid[i, :] = new_this
 
 if __name__ == '__main__':  # initializam jocul
     game = Py2048Logic()
+    game.new_number(k=2)
+    print(game)
+    game.make_move(move="left")
     print(game)
