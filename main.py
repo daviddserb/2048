@@ -57,3 +57,4 @@ def make_move(move):
             grid[i, :] = new_this  # salvam liniile in matrice
         else:
             grid[:, i] = new_this
+print("merge?")
