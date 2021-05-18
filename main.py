@@ -1,6 +1,8 @@
 import numpy as np
 import pygame
 import random
+import constants as CP
+
 
 N = 4
 grid = np.zeros((N, N), dtype=int)  # initializam grila de (N, N), pentru ca este un patrat de N linii si N coloane si variabilele de timp int
