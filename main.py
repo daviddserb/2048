@@ -58,3 +58,20 @@ def make_move(move):
         else:
             grid[:, i] = new_this
 
+def draw_game(screen, grid, myfont): # marian
+    screen.fill(CP['back'])  # culorile din background
+    for i in range(N):
+        for j in range(N):
+            n = grid[i][j]
+            rect_x = j * W // N + SPACING  # patratelele de pe linii si coloane
+            rect_y = i * H // N + SPACING
+            rect_w = W // N - 2 * SPACING  # spatierea patretelor pe latime
+            rect_h = H // N - 2 * SPACING  # spatierea patretelor pe inaltime
+            pygame.draw.rect(screen,
+                         CP[n],
+                      pygame.Rect(rect_x, rect_y, rect_w, rect_h),  # toate patratelele cu spatierea pe latime si lungime
+                             border_radius=8)  # rotunjirea coltului
+            text_surface = myfont.render(f'{n}', True, (0, 0, 0))  #  punem valorile/cifrele prin f de string
+            text_rect = text_surface.get_rect(center=(rect_x + rect_w/2,  # punerea cifrelor in mijlocul patratelelor
+                                                      rect_y + rect_h/2))
+            screen.blit(text_surface, text_rect)  # patratele cu valori
