@@ -1,7 +1,7 @@
 import numpy as np
 import pygame
 import random
-import constants as CP
+from constants import CP
 
 
 N = 4
