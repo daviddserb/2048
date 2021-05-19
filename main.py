@@ -1,8 +1,8 @@
 import numpy as np
-import pygame
 import random
-from constants import CP
+import pygame
 import sys
+from pygame.locals import *
 
 N = 4
 grid = np.zeros((N, N), dtype=int)  # initializam grila de (N, N), pentru ca este un patrat de N linii si N coloane si variabilele de timp int
@@ -95,7 +95,7 @@ def game_over():  # David
     # daca dupa prima miscare, se schimba, nu mai trebuie sa le verificam si pe restul
     for move in "lrud":  # daca se face o miscare random, dar care sa nu inchida jocul
         make_move(move)
-        if not all((grid == grid_bu).flatten()):  # flatten adica matricea o aranjeaza pe linie
+        if not all((grid == grid_bu).flatten()):  # aranjam matricea pe o linie ca sa fie mai usor la comparare
             grid = grid_bu  # pentru ca se pot face miscari, atunci ne reintoarcem pe grila noastra precedenta
             return False  # jocul ii bun
     return True  # game over
