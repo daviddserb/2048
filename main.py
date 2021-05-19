@@ -1,6 +1,8 @@
 import numpy as np
 import pygame
 import random
+from constants import CP
+import sys
 
 N = 4
 grid = np.zeros((N, N), dtype=int)  # initializam grila de (N, N), pentru ca este un patrat de N linii si N coloane si variabilele de timp int
@@ -59,4 +61,42 @@ def make_move(move):
             grid[i, :] = new_this  # salvam liniile in matrice
         else:
             grid[:, i] = new_this
+
+
+def wait_for_key(): #Marian
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                end()
+            if event.type == KEYDOWN:
+                if event.key == K_UP:
+                    return "u"
+                elif event.key == K_RIGHT:
+                    return "r"
+                elif event.key == K_LEFT:
+                    return "l"
+                elif event.key == K_DOWN:
+                    return "d"
+                elif event.key == K_F1:  # o oprire fortata
+                    menu()
+                elif event.key == K_q or event.key == K_ESCAPE:
+                    return "q"
+
+
+def end():  # David
+    pygame.display.quit()
+    pygame.quit()
+    sys.exit()
+
+
+def game_over():  # David
+    global grid
+    grid_bu = grid.copy()  # pt. ca make_move schimba grila, facem o copie
+    # daca dupa prima miscare, se schimba, nu mai trebuie sa le verificam si pe restul
+    for move in "lrud":  # daca se face o miscare random, dar care sa nu inchida jocul
+        make_move(move)
+        if not all((grid == grid_bu).flatten()):  # flatten adica matricea o aranjeaza pe linie
+            grid = grid_bu  # pentru ca se pot face miscari, atunci ne reintoarcem pe grila noastra precedenta
+            return False  # jocul ii bun
+    return True  # game over
 
