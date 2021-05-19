@@ -73,6 +73,8 @@ def draw_game(screen, grid, myfont): # marian
                          CP[n],
                       pygame.Rect(rect_x, rect_y, rect_w, rect_h),  # toate patratelele cu spatierea pe latime si lungime
                              border_radius=8)  # rotunjirea coltului
+            if n == 0:
+                continue
             text_surface = myfont.render(f'{n}', True, (0, 0, 0))  #  punem valorile/cifrele prin f de string
             text_rect = text_surface.get_rect(center=(rect_x + rect_w/2,  # punerea cifrelor in mijlocul patratelelor
                                                       rect_y + rect_h/2))
