@@ -79,3 +79,22 @@ def draw_game(screen, grid, myfont): # marian
             text_rect = text_surface.get_rect(center=(rect_x + rect_w/2,  # punerea cifrelor in mijlocul patratelelor
                                                       rect_y + rect_h/2))
             screen.blit(text_surface, text_rect)  # patratele cu valori
+
+def wait_for_key(): #Marian
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                end()
+            if event.type == KEYDOWN:
+                if event.key == K_UP:
+                    return "u"
+                elif event.key == K_RIGHT:
+                    return "r"
+                elif event.key == K_LEFT:
+                    return "l"
+                elif event.key == K_DOWN:
+                    return "d"
+                elif event.key == K_F1:  # o oprire fortata
+                    meniu()
+                elif event.key == K_q or event.key == K_ESCAPE:
+                    return "q"
