@@ -143,7 +143,7 @@ def play():  # David
         cmd = wait_for_key()  # dam o comanda de la tastatura
         old_grid = grid.copy()  # facem copie intregii grilei pt. a nu o pierde dupa ce se fac calculele
         make_move(cmd)  # incepem prelucrarea instructiunilor din functia make_move cu comanda noastra
-        print(grid)  # printam grida (daca dorim)
+        print(grid)  # daca dorim sa observam cel mai mare numar si sa vedem ca nu mai putem face miscari
         if game_over():  # daca in functia game_over avem return True, atunci ai pierdut
             game_over_text()
         if not all((grid == old_grid).flatten()):  # daca mai putem misca matricea intr-o directie
