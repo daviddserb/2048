@@ -100,9 +100,7 @@ def wait_for_key():  # Marian
                     return "l"
                 elif event.key == K_DOWN:
                     return "d"
-                elif event.key == K_F1:  # o oprire fortata
-                    end()
-                elif event.key == K_q or event.key == K_ESCAPE:
+                elif event.key == K_q or event.key == K_ESCAPE:  # o oprire fortata cu tasta q
                     end()
 
 
@@ -112,7 +110,7 @@ def game_over():  # David
     # daca dupa prima miscare, se schimba, nu mai trebuie sa le verificam si pe restul
     for move in 'lrud':  # daca se face o miscare random, dar care sa nu inchida jocul
         make_move(move)
-        if not all((grid == grid_bu).flatten()):  # flatten adica matricea o aranjeaza pe linie
+        if not all((grid == grid_bu).flatten()):  # flatten = matricea o aranjeaza pe linie, facem compararile mai usor
             grid = grid_bu  # pentru ca se pot face miscari, atunci ne reintoarcem pe grila noastra precedenta
             return False  # jocul ii bun
     return True  # game over
@@ -139,17 +137,17 @@ def end():  # David
 
 def play():  # David
     new_number(k=2)  # initializam cele 2 pozitii cu valori (inceputul jocului)
-    while True:
-        draw_game()  # desenam patratelele pentru fiecare pozitie
-        pygame.display.flip()  # updateaza continutul intregului display
-        cmd = wait_for_key()  # dam o comanda
-        old_grid = grid.copy()
-        make_move(cmd)
-        print(grid)
-        if game_over():
+    while True:  # o structura repetitiva in care nu vrem si linia 139
+        draw_game()  # desenam jocul cu patratele cu tot
+        pygame.display.flip()  # updateaza continutul intregului display (altfel ii blackscreen)
+        cmd = wait_for_key()  # dam o comanda de la tastatura
+        old_grid = grid.copy()  # facem copie intregii grilei pt. a nu o pierde dupa ce se fac calculele
+        make_move(cmd)  # incepem prelucrarea instructiunilor din functia make_move cu comanda noastra
+        print(grid)  # printam grida (daca dorim)
+        if game_over():  # daca in functia game_over avem return True, atunci ai pierdut
             game_over_text()
-        if not all((grid == old_grid).flatten()):
-            new_number()
+        if not all((grid == old_grid).flatten()):  # daca mai putem misca matricea intr-o directie
+            new_number()  # atunci la fiecare miscare, se genereaza un numar, 2 sau 4, pe o pozitie random
 
 
 play()
