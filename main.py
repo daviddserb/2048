@@ -5,9 +5,6 @@ import sys  # un modul cu diferite variabile si functii pt. manipularea diferite
 from pygame.locals import *
 from constants import CP
 
-import array as arr
-array_1 = np.array([3, 4, 5, 6, 8]) / 2;
-print(array_1)
 
 N = 4
 grid = np.zeros((N, N), dtype=int)  # declaram matricea patratica de 4, o initializam cu 0 si o declaram de tip int
