@@ -1,12 +1,12 @@
-import numpy as np
+import numpy as np  # este o biblioteca care adauga diferite functionalitati, in special pt. siruri si matrici
 import random
-import pygame
-import sys
+import pygame  # un modul cu diferite biblioteci pentru scrierea jocurilor video
+import sys  # un modul cu diferite variabile si functii pt. manipularea diferitelor parti a PRE (Python Runtime Environment)
 from pygame.locals import *
 from constants import CP
 
-N = 4  # matrice patratica de 4 linii si 4 coloane
-grid = np.zeros((N, N), dtype=int)  # initializam valorile din matrice cu 0 si le declaram de tip int
+N = 4
+grid = np.zeros((N, N), dtype=int)  # declaram matricea de 4 linii si 4 coloane si o initializam cu 0 pe toate pozitiile, declarand valorile de tip int
 W = 400  # latime
 H = W  # inaltime
 SPACING = 10
