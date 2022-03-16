@@ -6,14 +6,14 @@ from pygame.locals import *
 from constants import CP
 
 N = 4
-grid = np.zeros((N, N), dtype=int) # declaram matricea de 4 linii si 4 coloane si o initializam cu 0 pe toate pozitiile, declarand valorile de tip int
+grid = np.zeros((N, N), dtype=int) # declaram matricea patratica de 4 si o initializam cu 0 pe toate pozitiile declarandu-le de tip int
 W = 400 # latime
 H = W # inaltime
 SPACING = 10
 
-pygame.init() # initializarea tuturor modulelor pygame importante
+pygame.init() # initializarea tuturor modulelor pygame importate
 pygame.display.set_caption("2048") # titlul de fereastra a display-ului
-pygame.font.init() # initializare font a joculuri, pt. a putea sa vedem (cifrele din patratele, scorul, etc...)
+pygame.font.init() # initializare font a jocului pt. a putea sa vedem (cifrele din patratele, scorul, etc...)
 
 myfont = pygame.font.SysFont("Calibri", 30) # nume font si marimea caracterelor
 screen = pygame.display.set_mode((W, H))  # rezolutia jocului
