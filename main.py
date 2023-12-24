@@ -1,40 +1,35 @@
-import numpy as np  # este o biblioteca care adauga diferite functionalitati, in special pt. siruri si matrici
+import numpy as np
+import sys
 import random
-import pygame  # un modul cu diferite biblioteci pentru scrierea jocurilor video
-import sys  # un modul cu diferite variabile si functii pt. manipularea diferitelor parti a PRE
+import pygame
 from pygame.locals import *
 from constants import CP
 
-
 N = 4
-grid = np.zeros((N, N), dtype=int)  # declaram matricea patratica de 4, o initializam cu 0 si o declaram de tip int
-W = 400  # latime
-H = W  # inaltime
+grid = np.zeros((N, N), dtype=int)
+W = 400
+H = W
 SPACING = 10
 
-pygame.init()  # initializarea tuturor modulelor pygame importate
-pygame.display.set_caption("2048")  # titlul de fereastra a display-ului
-pygame.font.init()  # initializare font a jocului pt. a putea sa vedem (cifrele din patratele, scorul, etc...)
+pygame.init()  # initialize imported pygame modules
+pygame.display.set_caption("2048")  # game title
+# pygame.font.init()  # ???
+custom_font = pygame.font.SysFont("Calibre", 30)
+screen = pygame.display.set_mode((W, H))  # game resolution
 
-myfont = pygame.font.SysFont("Calibri", 30)  # nume font si marimea caracterelor
-screen = pygame.display.set_mode((W, H))  # rezolutia jocului
 
-
-def new_number(k=1):  # Marian, k = 1 pt. ca sa se afiseze un singur numar la fiecare mutare
-    # np where(conditie) returneaza poz. elem. care respecta conditia
-    # zip gupeaza linia cu coloana
-    # list este un constructor si returneaza o lista
+def new_number(k=1):  # generate only one number (because of k = 1) after each move
+    # insert the value (2 or 4) only in an available empty square
     free_poss = list(zip(*np.where(grid == 0)))
-    # => free_pos = toate pozitiile grupate (l cu c) care nu au valori, pt. a putea pune numere
-    for pos in random.sample(free_poss, k=k):  # random.sample(lista, x) returneaza x elemente random din lista
-        if random.random() < .1:  # random.random() returneaza un numar intre [0.0, 1.0]
+    for pos in random.sample(free_poss, k=k):
+        if random.random() < .1:
             grid[pos] = 4
         else:
             grid[pos] = 2
 
 
-def _get_nums(array):  # Sergiu
-    array_n = array[array != 0]  # salvam in lista, doar numerele != 0 pt. a face verificarea de valori mai usoara
+def _get_nums(array):
+    array_n = array[array != 0]
     array_n_final = []
     skip = False
 
@@ -42,7 +37,7 @@ def _get_nums(array):  # Sergiu
         if skip:
             skip = False
             continue
-        if j != len(array_n) - 1 and array_n[j] == array_n[j + 1]:  # verificam vecinii
+        if j != len(array_n) - 1 and array_n[j] == array_n[j + 1]:
             new_n = array_n[j] * 2
             skip = True
         else:
@@ -50,37 +45,36 @@ def _get_nums(array):  # Sergiu
 
         array_n_final.append(new_n)
 
-    return np.array(array_n_final)  # returnam noua lista in urma mutarii
+    return np.array(array_n_final)  # return the new list after the move
 
 
-def make_move(move):  # Sergiu
+def make_move(move):
     for i in range(N):
-        if move in "lr":  # stanga/dreapta
-            array = grid[i, :]  # lucram pe linii
-        else:  # sus/jos
-            array = grid[:, i]  # lucram pe coloane
+        if move in "lr":
+            array = grid[i, :]
+        else:
+            array = grid[:, i]
 
         flipped = False
         if move in "rd":
-            # dreapta/jos => intoarcem linia invers (ex.: 2 0 2 2 -> pt. st => 4 2 VS pt. dr => 2 4)
             flipped = True
-            array = array[::-1]  # [::-1] -> intoarcem, adica de la sfarsit spre inceput
+            array = array[::-1]
 
         array_n = _get_nums(array)
-        new_array = np.zeros_like(array)  # np.zeros_like(dim) return un sir cu valori 0 de dimensiunea dim
+        new_array = np.zeros_like(array)
         new_array[:len(array_n)] = array_n
 
         if flipped:
-            new_array = new_array[::-1]  # daca a fost intoarsa, o intoarcem din nou ca sa fie ca la inceput
+            new_array = new_array[::-1]
 
         if move in "lr":
-            grid[i, :] = new_array  # salvam pe linii
+            grid[i, :] = new_array
         else:
-            grid[:, i] = new_array  # salvam pe coloane
+            grid[:, i] = new_array
 
 
-def draw_game():  # Marian
-    screen.fill(CP["background"])  # culorile din background
+def draw_game():
+    screen.fill(CP["background"])
 
     for i in range(N):
         for j in range(N):
@@ -91,7 +85,6 @@ def draw_game():  # Marian
             rect_w = W // N - 2 * SPACING
             rect_h = H // N - 2 * SPACING
 
-            # cu Rect accesam ce este in interiorul formelor pe care le desenam
             pygame.draw.rect(screen,
                              CP[n],
                              pygame.Rect(rect_x, rect_y, rect_w, rect_h),
@@ -99,17 +92,17 @@ def draw_game():  # Marian
 
             if n == 0:
                 continue
-            text_surface = myfont.render(str(n), True, (0, 0, 0))
+            text_surface = custom_font.render(str(n), True, (0, 0, 0))
             text_rect = text_surface.get_rect(center=(rect_x + rect_w / 2, rect_y + rect_h / 2))
-            screen.blit(text_surface, text_rect)  # blit = desenam
+            screen.blit(text_surface, text_rect)
 
 
-def wait_for_key():  # Marian
+def wait_for_key():
     while True:
-        for event in pygame.event.get():  # verifica toate evenimentele din pygame
-            if event.type == QUIT:  # X-ul din fereastra jocului
+        for event in pygame.event.get():
+            if event.type == QUIT:
                 end()
-            if event.type == KEYDOWN:  # cand o tasta este apasata
+            if event.type == KEYDOWN:
                 if event.key == K_UP:
                     return "u"
                 elif event.key == K_RIGHT:
@@ -118,54 +111,56 @@ def wait_for_key():  # Marian
                     return "l"
                 elif event.key == K_DOWN:
                     return "d"
-                elif event.key == K_ESCAPE or event.key == K_q:  # o oprire fortata cu tasta q (de exemplu)
+                elif event.key == K_ESCAPE or event.key == K_q:  # a custom forced stop (e.g. with q)
                     end()
 
 
-def game_over():  # David
+def game_over():
     global grid
     grid_bu = grid.copy()
     for move in 'lrud':
         make_move(move)
-        # daca dupa o mutare, matricea veche deja difera de cea noua => nu mai trebuie sa verificam restul mutarilor
-        if not all((grid == grid_bu).flatten()):  # flatten = matricea devine sir pt. a face compararile mai usor
+        # if the matrix before the move is different
+        # if after a move, the old matrix already differs from the new one => game still not over
+        if not all((grid == grid_bu).flatten()):
             grid = grid_bu
             return False
     return True
 
 
-def game_over_text():  # David
+def game_over_text():
     screen.fill(CP["menu"])
     while True:
         for event in pygame.event.get():
-            if event.type == QUIT:  # daca apas pe X (Close) o sa inchida jocul
+            if event.type == QUIT:
                 end()
-        text = myfont.render("Ai pierdut!", True, CP["textfinish"])
-        textpos = text.get_rect()  # pt. ca suprafetele nu au o pozitie, trebuie stocate in blit
-        textpos.center = (W // 2, H // 2)
-        screen.blit(text, textpos)
+        text = custom_font.render("Game over!", True, CP["text_finish"])
+        text_pos = text.get_rect()
+        text_pos.center = (W // 2, H // 2)
+        screen.blit(text, text_pos)
         pygame.display.update()
 
 
-def end():  # David
+def end():
     pygame.display.quit()
     pygame.quit()
     sys.exit()
 
 
-def play():  # David
-    new_number(k=2)  # initializam 2 pozitii random
+def play():
+    new_number(k=2)  # start the game with 2 valued squares
+    print(grid)
     while True:
         draw_game()
-        pygame.display.flip()  # updateaza continutul INTREGULUI display (altfel este blackscreen)
+        pygame.display.flip()
         cmd = wait_for_key()
-        old_grid = grid.copy()  # facem o copie pt. a putea verifica, dupa mutare, diferentele new vs old grid
+        old_grid = grid.copy()
         make_move(cmd)
-        print(grid)  # daca dorim sa observam mutarea tablei in consola
+        print(grid)
         if game_over():
             game_over_text()
-        if not all((grid == old_grid).flatten()):  # cand matricea veche vs noua sunt diferite => sunt posibile mutari
-            new_number()  # atunci la fiecare miscare, se genereaza un numar, 2 sau 4, pe o pozitie random
+        if not all((grid == old_grid).flatten()):
+            new_number()
 
 
 play()
