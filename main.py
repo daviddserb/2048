@@ -7,13 +7,13 @@ from constants import CP
 
 N = 4
 grid = np.zeros((N, N), dtype=int)
-W = 400
+W = 500
 H = W
 SPACING = 10
+score = 0
 
 pygame.init()  # initialize imported pygame modules
 pygame.display.set_caption("2048")  # game title
-# pygame.font.init()  # ???
 custom_font = pygame.font.SysFont("Calibre", 30)
 screen = pygame.display.set_mode((W, H))  # game resolution
 
@@ -49,6 +49,8 @@ def _get_nums(array):
 
 
 def make_move(move):
+    global score
+
     for i in range(N):
         if move in "lr":
             array = grid[i, :]
@@ -71,6 +73,8 @@ def make_move(move):
             grid[i, :] = new_array
         else:
             grid[:, i] = new_array
+
+    # ??? TODO: calculate score
 
 
 def draw_game():
@@ -121,23 +125,30 @@ def game_over():
     for move in 'lrud':
         make_move(move)
         # if the matrix before the move is different
-        # if after a move, the old matrix already differs from the new one => game still not over
+        # after a move, if the old matrix already differs from the new one => game still not over
         if not all((grid == grid_bu).flatten()):
             grid = grid_bu
             return False
     return True
 
 
-def game_over_text():
+def game_over_text(final_score):
     screen.fill(CP["menu"])
+
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 end()
-        text = custom_font.render("Game over!", True, CP["text_finish"])
-        text_pos = text.get_rect()
-        text_pos.center = (W // 2, H // 2)
-        screen.blit(text, text_pos)
+
+        game_over_surface = custom_font.render("Game over!", True, CP["text_finish"])
+        score_surface = custom_font.render("Score: {}".format(final_score), True, (0, 0, 0))
+
+        game_over_rect = game_over_surface.get_rect(center=(W // 2, H // 2 - 20))
+        score_rect = score_surface.get_rect(center=(W // 2, H // 2 + 20))
+
+        screen.blit(game_over_surface, game_over_rect)
+        screen.blit(score_surface, score_rect)
+
         pygame.display.update()
 
 
@@ -156,9 +167,11 @@ def play():
         cmd = wait_for_key()
         old_grid = grid.copy()
         make_move(cmd)
+        print("Move:", cmd)
         print(grid)
+        print("Score:", score)
         if game_over():
-            game_over_text()
+            game_over_text(score)
         if not all((grid == old_grid).flatten()):
             new_number()
 
