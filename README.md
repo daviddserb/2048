@@ -8,3 +8,7 @@ How to play:
 2. Squares with matching values merge upon collision, creating higher-valued squares.
 3. Reach the 2048 tile by combining squares strategically.
 4. The game ends when no more moves are possible.
+
+After downloading the project, you must:
+- set the Python Interpreter - select the python.exe from the folder where you installed python on the PC.
+- install the packages: numpy and pygame.
