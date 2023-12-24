@@ -10,5 +10,5 @@ How to play:
 4. The game ends when no more moves are possible.
 
 After downloading the project, you must:
-- set the Python Interpreter - select the python.exe from the folder where you installed python on the PC.
-- install the packages: numpy and pygame.
+1. set the Python Interpreter - select the python.exe from the folder where you installed python on the PC.
+2. install the packages: numpy and pygame.
