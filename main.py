@@ -13,6 +13,7 @@ SCORE_SPACING = 50
 
 grid = np.zeros((GRID_SIZE, GRID_SIZE), dtype=int)
 score = 0
+is_game_lost = False
 
 pygame.init()  # initialize imported pygame modules
 pygame.display.set_caption("2048")  # game title
@@ -22,7 +23,8 @@ game_screen = pygame.display.set_mode((WIDTH, HEIGHT))  # game resolution
 
 def initialize_game():
     new_number(k=2)  # start the game with 2 valued squares
-    print(grid)
+    # print("Starting grid:")
+    # print(grid)
     while True:
         draw_game()
         pygame.display.flip()
@@ -30,16 +32,18 @@ def initialize_game():
         old_grid = grid.copy()
         make_move(user_command)
         score_calculation(old_grid, grid, user_command)
-        print("Move:", user_command)
+        # print("Move:", user_command)
         if game_over():
-            game_over_text(score)
+            game_finish_text(score)
+        if game_win():
+            game_finish_text(score)
         if not all((grid == old_grid).flatten()):
-            print("Grid after move (no new number):")
-            print(grid)
+            # print("Grid after move (no new number):")
+            # print(grid)
             new_number()
-            print("Grid after move (with new number):")
-            print(grid)
-        print("Score:", score)
+            # print("Grid after move (with new number):")
+            # print(grid)
+        # print("Score:", score)
 
 
 # generate k number/s after each move - insert the random value (2 or 4) only in an available empty squares
@@ -170,8 +174,13 @@ def draw_game():
     game_screen.blit(score_surface, score_rect)
 
 
+def game_win():
+    return any(tile == 2048 for row in grid for tile in row)
+
+
 def game_over():
     global grid
+    global is_game_lost
     left_right_up_down_moves = "lrud"
 
     grid_copy = grid.copy()
@@ -181,10 +190,12 @@ def game_over():
         if not all((grid == grid_copy).flatten()):
             grid = grid_copy
             return False
+
+    is_game_lost = True
     return True
 
 
-def game_over_text(final_score):
+def game_finish_text(final_score):
     game_screen.fill(CP["menu"])
 
     while True:
@@ -192,7 +203,11 @@ def game_over_text(final_score):
             if event.type == QUIT:
                 game_end()
 
-        game_over_surface = game_font.render("Game over!", True, CP["text_finish"])
+        final_text = "Congratulations! You Win!"
+        if is_game_lost:
+            final_text = "Game over!"
+
+        game_over_surface = game_font.render(final_text, True, CP["text_finish"])
         score_surface = game_font.render("Score: {}".format(final_score), True, (0, 0, 0))
 
         game_over_rect = game_over_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 20))
