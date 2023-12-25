@@ -48,6 +48,7 @@ def initialize_game():
 
 # generate k number/s after each move - insert the random value (2 or 4) only in an available empty squares
 def new_number(k=1):
+
     free_pos = list(zip(*np.where(grid == 0)))
 
     for pos in random.sample(free_pos, k=k):
