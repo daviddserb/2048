@@ -1,1 +1,1 @@
-python-3.10.5
+web: gunicorn main:app
