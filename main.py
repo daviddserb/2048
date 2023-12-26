@@ -2,6 +2,7 @@ import numpy as np
 import sys
 import random
 import pygame
+import asyncio  # to be able to convert pygame GUI to Web
 from pygame.locals import *
 from constants import CP
 
@@ -21,22 +22,22 @@ game_font = pygame.font.SysFont("Calibre", 30)
 game_screen = pygame.display.set_mode((WIDTH, HEIGHT))  # game resolution
 
 
-def initialize_game():
+async def initialize_game():
     new_number(k=2)  # start the game with 2 valued squares
     # print("Starting grid:")
     # print(grid)
     while True:
         draw_game()
         pygame.display.flip()
-        user_command = wait_for_key()
+        user_command = await wait_for_key()
         old_grid = grid.copy()
         make_move(user_command)
         score_calculation(old_grid, grid, user_command)
         # print("Move:", user_command)
         if game_over():
-            game_finish_text(score)
+            await game_finish_text(score)
         if game_win():
-            game_finish_text(score)
+            await game_finish_text(score)
         if not all((grid == old_grid).flatten()):
             # print("Grid after move (no new number):")
             # print(grid)
@@ -44,6 +45,7 @@ def initialize_game():
             # print("Grid after move (with new number):")
             # print(grid)
         # print("Score:", score)
+        await asyncio.sleep(0)
 
 
 # generate k number/s after each move - insert the random value (2 or 4) only in an available empty squares
@@ -105,7 +107,7 @@ def make_move(move):
             grid[:, i] = new_array
 
 
-def wait_for_key():
+async def wait_for_key():
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -121,6 +123,7 @@ def wait_for_key():
                     return "d"
                 elif event.key == K_ESCAPE or event.key == K_q:  # a custom forced stop (e.g. with q)
                     game_end()
+        await asyncio.sleep(0)
 
 
 def score_calculation(grid_before_move, grid_after_move, move):
@@ -195,26 +198,25 @@ def game_over():
     return True
 
 
-def game_finish_text(final_score):
-    game_screen.fill(CP["menu"])
-
+async def game_finish_text(final_score):
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 game_end()
+        await asyncio.sleep(0)
 
         final_text = "Congratulations! You Win!"
         if is_game_lost:
-            final_text = "Game over!"
+            final_text = "Game over! You Lost!"
 
         game_over_surface = game_font.render(final_text, True, CP["text_finish"])
-        score_surface = game_font.render("Score: {}".format(final_score), True, (0, 0, 0))
+        # score_surface = game_font.render("Score: {}".format(final_score), True, (0, 0, 0))
 
         game_over_rect = game_over_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 20))
-        score_rect = score_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20))
+        # score_rect = score_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20))
 
         game_screen.blit(game_over_surface, game_over_rect)
-        game_screen.blit(score_surface, score_rect)
+        # game_screen.blit(score_surface, score_rect)
 
         pygame.display.update()
 
@@ -225,4 +227,4 @@ def game_end():
     sys.exit()
 
 
-initialize_game()
+asyncio.run(initialize_game())
