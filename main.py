@@ -2,6 +2,7 @@ import numpy as np
 import sys
 import random
 import pygame
+import pygame.locals as pl
 import asyncio  # to be able to convert pygame GUI to Web
 from pygame.locals import *
 from constants import CP
@@ -172,7 +173,7 @@ def draw_game():
             game_screen.blit(text_surface, text_rect)
 
     # Display the score at the bottom of the grid
-    score_surface = game_font.render("Score: {}".format(score), True, (0, 0, 0))
+    score_surface = game_font.render("Score: {}".format(score), True, CP["score"])
     score_rect = score_surface.get_rect(center=(WIDTH // 2, HEIGHT - SCORE_SPACING // 2))
     game_screen.blit(score_surface, score_rect)
 
@@ -203,20 +204,29 @@ async def game_finish_text(final_score):
         for event in pygame.event.get():
             if event.type == QUIT:
                 game_end()
+            elif event.type == MOUSEBUTTONDOWN and event.button == 1:
+                # Check if the mouse click is within the restart button area
+                if WIDTH // 2 - 50 <= event.pos[0] <= WIDTH // 2 + 50 and HEIGHT // 2 + 40 <= event.pos[1] <= HEIGHT // 2 + 80:
+                    await reset_game()
+
         await asyncio.sleep(0)
 
         final_text = "Congratulations! You Win!"
         if is_game_lost:
             final_text = "Game over! You Lost!"
 
-        game_over_surface = game_font.render(final_text, True, CP["text_finish"])
-        # score_surface = game_font.render("Score: {}".format(final_score), True, (0, 0, 0))
+        finish_text = game_font.render(final_text, True, CP["text_finish"])
 
-        game_over_rect = game_over_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 20))
-        # score_rect = score_surface.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 20))
+        finish_text_rect = finish_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 20))
+        restart_button_rect = pygame.Rect(WIDTH // 2 - 50, HEIGHT // 2 + 40, 100, 40)  # restart button
 
-        game_screen.blit(game_over_surface, game_over_rect)
-        # game_screen.blit(score_surface, score_rect)
+        # restart button and his text
+        pygame.draw.rect(game_screen, CP["button"], restart_button_rect, border_radius=8)
+        restart_text_surface = game_font.render("Restart", True, (0, 0, 0))
+        restart_text_rect = restart_text_surface.get_rect(center=restart_button_rect.center)
+
+        game_screen.blit(finish_text, finish_text_rect)
+        game_screen.blit(restart_text_surface, restart_text_rect)
 
         pygame.display.update()
 
@@ -225,6 +235,14 @@ def game_end():
     pygame.display.quit()
     pygame.quit()
     sys.exit()
+
+
+async def reset_game():
+    global grid, score, is_game_lost
+    grid = np.zeros((GRID_SIZE, GRID_SIZE), dtype=int)
+    score = 0
+    is_game_lost = False
+    await initialize_game()
 
 
 asyncio.run(initialize_game())

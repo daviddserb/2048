@@ -1,5 +1,8 @@
+# RGB values
 CP = {
-    'text_finish': (0, 0, 0),
+    'score': (255, 255, 255),  # white
+    'button': (0, 0, 255),  # blue
+    'text_finish': (0, 0, 0),  # black
     'background': (189, 172, 161),
     0: (204, 192, 179),
     2: (238, 228, 219),
