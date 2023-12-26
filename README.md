@@ -1,6 +1,6 @@
-# 2048 Game Clone in Python
+# 2048 - Game Clone in Python
 
-Embark on a strategic journey within a 4x4 grid, where the challenge lies in sliding squares in every direction — left, right, up, and down.
+Embark on a strategic game within a 4x4 grid, where the challenge lies in sliding squares in every direction — left, right, up, and down.
 Your mission is to skillfully merge these squares, aiming for the elusive 2048 value to claim victory.
 
 How to play:
