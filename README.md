@@ -14,3 +14,5 @@ How to play:
 After downloading the project, you must:
 1. set the Python Interpreter - select the python.exe from the folder where you installed python on the PC.
 2. install the packages: numpy and pygame.
+
+![image](https://github.com/daviddserb/2048/assets/83017887/d83777eb-4acc-4a2b-bb98-467924db8e8e)
