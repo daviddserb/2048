@@ -2,10 +2,9 @@ import numpy as np
 import sys
 import random
 import pygame
-import pygame.locals as pl
 import asyncio  # to be able to convert pygame GUI to Web
 from pygame.locals import *
-from constants import CP
+from constants import COLORS
 
 GRID_SIZE = 4
 WIDTH = 500
@@ -24,7 +23,7 @@ game_screen = pygame.display.set_mode((WIDTH, HEIGHT))  # game resolution
 
 
 async def initialize_game():
-    new_number(k=2)  # start the game with 2 valued squares
+    new_number(k=2)
     # print("Starting grid:")
     # print(grid)
     while True:
@@ -36,9 +35,9 @@ async def initialize_game():
         score_calculation(old_grid, grid, user_command)
         # print("Move:", user_command)
         if game_over():
-            await game_finish_text(score)
+            await game_finish_text()
         if game_win():
-            await game_finish_text(score)
+            await game_finish_text()
         if not all((grid == old_grid).flatten()):
             # print("Grid after move (no new number):")
             # print(grid)
@@ -49,11 +48,11 @@ async def initialize_game():
         await asyncio.sleep(0)
 
 
-# generate k number/s after each move - insert the random value (2 or 4) only in an available empty squares
+# generate k number after each move - insert the random value (2 or 4) only in an available empty squares
 def new_number(k=1):
-    free_pos = list(zip(*np.where(grid == 0)))
+    grid_free_pos = list(zip(*np.where(grid == 0)))
 
-    for pos in random.sample(free_pos, k=k):
+    for pos in random.sample(grid_free_pos, k=k):
         if random.random() < .1:
             grid[pos] = 4
         else:
@@ -61,23 +60,23 @@ def new_number(k=1):
 
 
 def _get_nums(array):
-    array_n = array[array != 0]
-    array_n_final = []
+    array_non_zeros = array[array != 0]
+    array_non_zeros_final = []
     skip = False
 
-    for j in range(len(array_n)):
+    for pos in range(len(array_non_zeros)):
         if skip:
             skip = False
             continue
-        if j != len(array_n) - 1 and array_n[j] == array_n[j + 1]:
-            new_n = array_n[j] * 2
+        if pos != len(array_non_zeros) - 1 and array_non_zeros[pos] == array_non_zeros[pos + 1]:
+            new_n = array_non_zeros[pos] * 2
             skip = True
         else:
-            new_n = array_n[j]
+            new_n = array_non_zeros[pos]
 
-        array_n_final.append(new_n)
+        array_non_zeros_final.append(new_n)
 
-    return np.array(array_n_final)
+    return np.array(array_non_zeros_final)
 
 
 def make_move(move):
@@ -85,20 +84,25 @@ def make_move(move):
     right_down_moves = "rd"
 
     for i in range(GRID_SIZE):
+        # if move is LEFT OR RIGHT, we get the ROWS of the grid
         if move in left_right_moves:
             array = grid[i, :]
+        # else (move is UP OR DOWN), we get the COLUMNS of the grid
         else:
             array = grid[:, i]
 
+        # if move is RIGHT or DOWN, we get the REVERSED order of the array
+        # we do this to don't change the algorithm of calculating the values in the array
         flipped = False
         if move in right_down_moves:
             flipped = True
             array = array[::-1]
 
-        array_n = _get_nums(array)
+        array_non_zeros = _get_nums(array)
         new_array = np.zeros_like(array)
-        new_array[:len(array_n)] = array_n
+        new_array[:len(array_non_zeros)] = array_non_zeros
 
+        # if it was flipped (move was RIGHT or DOWN), we flip it back again, so it comes back to the original state
         if flipped:
             new_array = new_array[::-1]
 
@@ -147,20 +151,20 @@ def score_calculation(grid_before_move, grid_after_move, move):
 
 
 def draw_game():
-    game_screen.fill(CP["background"])
+    game_screen.fill(COLORS["background"])
 
-    for i in range(GRID_SIZE):
-        for j in range(GRID_SIZE):
-            n = grid[i][j]
+    for row in range(GRID_SIZE):
+        for col in range(GRID_SIZE):
+            n = grid[row][col]
 
-            rect_x = j * WIDTH // GRID_SIZE + SPACING
-            rect_y = i * (HEIGHT - SCORE_SPACING) // GRID_SIZE + SPACING
+            rect_x = col * WIDTH // GRID_SIZE + SPACING
+            rect_y = row * (HEIGHT - SCORE_SPACING) // GRID_SIZE + SPACING
             rect_w = WIDTH // GRID_SIZE - 2 * SPACING
             rect_h = (HEIGHT - SCORE_SPACING) // GRID_SIZE - 2 * SPACING
 
             pygame.draw.rect(
                 game_screen,
-                CP[n],
+                COLORS[n],
                 pygame.Rect(rect_x, rect_y, rect_w, rect_h),
                 border_radius=8
             )
@@ -173,7 +177,7 @@ def draw_game():
             game_screen.blit(text_surface, text_rect)
 
     # Display the score at the bottom of the grid
-    score_surface = game_font.render("Score: {}".format(score), True, CP["score"])
+    score_surface = game_font.render("Score: {}".format(score), True, COLORS["score"])
     score_rect = score_surface.get_rect(center=(WIDTH // 2, HEIGHT - SCORE_SPACING // 2))
     game_screen.blit(score_surface, score_rect)
 
@@ -199,7 +203,7 @@ def game_over():
     return True
 
 
-async def game_finish_text(final_score):
+async def game_finish_text():
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -215,13 +219,13 @@ async def game_finish_text(final_score):
         if is_game_lost:
             final_text = "Game over! You Lost!"
 
-        finish_text = game_font.render(final_text, True, CP["text_finish"])
+        finish_text = game_font.render(final_text, True, COLORS["text_finish"])
 
         finish_text_rect = finish_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 - 20))
         restart_button_rect = pygame.Rect(WIDTH // 2 - 50, HEIGHT // 2 + 40, 100, 40)  # restart button
 
         # restart button and his text
-        pygame.draw.rect(game_screen, CP["button"], restart_button_rect, border_radius=8)
+        pygame.draw.rect(game_screen, COLORS["button"], restart_button_rect, border_radius=8)
         restart_text_surface = game_font.render("Restart", True, (0, 0, 0))
         restart_text_rect = restart_text_surface.get_rect(center=restart_button_rect.center)
 
